@@ -53,27 +53,11 @@ func init() {
 }
 
 func getProducts(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-
-	if r.Method != http.MethodGet {
-		http.Error(w, "Please send GET request", http.StatusBadRequest)
-		return
-	}
-
 	json.NewEncoder(w).Encode(productList)
 	w.WriteHeader(http.StatusOK)
 }
 
 func createProduct(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-
-	if r.Method != http.MethodPost {
-		http.Error(w, "Please send POST request", http.StatusBadRequest)
-		return
-	}
-
 	var newProduct Product
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&newProduct)
@@ -85,15 +69,31 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+func globalRouter(mux *http.ServeMux) http.Handler {
+	handleGlobalRoutes := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		mux.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(handleGlobalRoutes)
+}
+
 func main() {
 	mux := http.NewServeMux()
+	globalRouter := globalRouter(mux)
 
-	mux.HandleFunc("/products", getProducts)
-	mux.HandleFunc("/create-product", createProduct)
+	mux.Handle("GET /products", http.HandlerFunc(getProducts))
+	mux.Handle("POST /create-product", http.HandlerFunc(createProduct))
 
 	fmt.Println("Server is running on port 8080...")
 
-	err := http.ListenAndServe(":8080", mux)
+	err := http.ListenAndServe(":8080", globalRouter)
 	if err != nil {
 		fmt.Println("Server error", err)
 	}
