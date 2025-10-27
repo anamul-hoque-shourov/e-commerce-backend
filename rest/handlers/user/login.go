@@ -1,8 +1,6 @@
 package user
 
 import (
-	"ecommerce/config"
-	"ecommerce/database"
 	"ecommerce/utils"
 	"encoding/json"
 	"fmt"
@@ -24,14 +22,18 @@ func (h *Handler) Login(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user := database.Find(loginReq.Email, loginReq.Password)
+	user, err := h.service.Get(loginReq.Email, loginReq.Password)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(res, "Could not login", http.StatusInternalServerError)
+		return
+	}
 	if user == nil {
 		utils.SendError(res, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
-	config := config.GetConfig()
-	accessToken, err := utils.CreateJwt(config.JwtSecret, utils.Payload{
+	accessToken, err := utils.CreateJwt(h.config.JwtSecret, utils.Payload{
 		ID:          user.ID,
 		FistName:    user.FirstName,
 		LastName:    user.LastName,

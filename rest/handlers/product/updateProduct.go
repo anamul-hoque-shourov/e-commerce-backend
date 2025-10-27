@@ -1,7 +1,7 @@
 package product
 
 import (
-	"ecommerce/database"
+	"ecommerce/domain"
 	"ecommerce/utils"
 	"encoding/json"
 	"fmt"
@@ -19,7 +19,7 @@ func (h *Handler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var product database.Product
+	var product domain.Product
 	decoder := json.NewDecoder(req.Body)
 	err = decoder.Decode(&product)
 	if err != nil {
@@ -28,7 +28,11 @@ func (h *Handler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	product.ID = id
-	database.Update(product)
+	_, err = h.service.Update(product)
+	if err != nil {
+		http.Error(res, "Error updating product", http.StatusInternalServerError)
+		return
+	}
 
 	utils.SendData(res, "Product updated successfully", http.StatusCreated)
 }

@@ -8,13 +8,23 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var configurations Config
+var configurations *Config
+
+type DBConfig struct {
+	Host     string
+	Port     int
+	User     string
+	Password string
+	Name     string
+	SslMode  string
+}
 
 type Config struct {
 	Version     string
 	ServiceName string
 	Port        int
 	JwtSecret   string
+	DBConfig    DBConfig
 }
 
 func loadConfig() {
@@ -54,15 +64,69 @@ func loadConfig() {
 		os.Exit(1)
 	}
 
-	configurations = Config{
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		fmt.Println("DB Host is required")
+		os.Exit(1)
+	}
+
+	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		fmt.Println("DB Port is required")
+		os.Exit(1)
+	}
+
+	dbPortInt, err := strconv.Atoi(dbPort)
+	if err != nil {
+		fmt.Println("DB Port must be a number", err)
+		os.Exit(1)
+	}
+
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		fmt.Println("DB User is required")
+		os.Exit(1)
+	}
+
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if dbPassword == "" {
+		fmt.Println("DB Password is required")
+		os.Exit(1)
+	}
+
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		fmt.Println("DB Name is required")
+		os.Exit(1)
+	}
+
+	dbSslMode := os.Getenv("DB_SSLMODE")
+	if dbSslMode == "" {
+		fmt.Println("DB SslMode is required")
+		os.Exit(1)
+	}
+
+	dbConfig := DBConfig{
+		Host:     dbHost,
+		Port:     dbPortInt,
+		User:     dbUser,
+		Password: dbPassword,
+		Name:     dbName,
+		SslMode:  dbSslMode,
+	}
+
+	configurations = &Config{
 		Version:     version,
 		ServiceName: serviceName,
 		Port:        port,
 		JwtSecret:   jwtSecret,
+		DBConfig:    dbConfig,
 	}
 }
 
-func GetConfig() Config {
-	loadConfig()
+func GetConfig() *Config {
+	if configurations == nil {
+		loadConfig()
+	}
 	return configurations
 }

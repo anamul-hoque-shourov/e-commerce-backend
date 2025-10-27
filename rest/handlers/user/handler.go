@@ -1,8 +1,17 @@
 package user
 
+import (
+	"ecommerce/config"
+)
+
 type Handler struct {
+	config  *config.Config
+	service Service
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(config *config.Config, service Service) *Handler {
+	return &Handler{
+		config:  config,
+		service: service,
+	}
 }

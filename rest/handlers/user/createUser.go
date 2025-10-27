@@ -1,24 +1,45 @@
 package user
 
 import (
-	"ecommerce/database"
+	"ecommerce/domain"
 	"ecommerce/utils"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
+type RequestCreateUser struct {
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	IsShopOwner bool   `json:"isShopOwner"`
+}
+
 func (h *Handler) CreateUser(res http.ResponseWriter, req *http.Request) {
-	var newUser database.User
+	var requestedUser RequestCreateUser
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&newUser)
+	err := decoder.Decode(&requestedUser)
+
 	if err != nil {
 		fmt.Println(err)
 		http.Error(res, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
-	newUser = newUser.Store()
+	newUser, err := h.service.Create(domain.User{
+		FirstName:   requestedUser.FirstName,
+		LastName:    requestedUser.LastName,
+		Email:       requestedUser.Email,
+		Password:    requestedUser.Password,
+		IsShopOwner: requestedUser.IsShopOwner,
+	})
+
+	if err != nil {
+		fmt.Println(err)
+		http.Error(res, "Could not create user", http.StatusInternalServerError)
+		return
+	}
 
 	utils.SendData(res, newUser, http.StatusCreated)
 }
