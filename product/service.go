@@ -12,8 +12,8 @@ func NewService(productRepo ProductRepo) Service {
 	}
 }
 
-func (s *service) List() ([]*domain.Product, error) {
-	return s.productRepo.List()
+func (s *service) List(page int, limit int) ([]*domain.Product, error) {
+	return s.productRepo.List(page, limit)
 }
 
 func (s *service) Get(productId int) (*domain.Product, error) {
