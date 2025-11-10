@@ -34,7 +34,7 @@ func (h *Handler) Login(res http.ResponseWriter, req *http.Request) {
 	}
 
 	accessToken, err := utils.CreateJwt(h.config.JwtSecret, utils.Payload{
-		ID:          user.ID,
+		Id:          user.Id,
 		FistName:    user.FirstName,
 		LastName:    user.LastName,
 		Email:       user.Email,

@@ -12,7 +12,7 @@ func NewService(productRepo ProductRepo) Service {
 	}
 }
 
-func (s *service) List(page int, limit int) ([]*domain.Product, error) {
+func (s *service) List(page, limit int) ([]*domain.Product, error) {
 	return s.productRepo.List(page, limit)
 }
 

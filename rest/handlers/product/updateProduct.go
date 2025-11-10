@@ -27,7 +27,7 @@ func (h *Handler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, "Please provide valid json", http.StatusBadRequest)
 		return
 	}
-	product.ID = id
+	product.Id = id
 	_, err = h.service.Update(product)
 	if err != nil {
 		http.Error(res, "Error updating product", http.StatusInternalServerError)

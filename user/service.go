@@ -13,23 +13,9 @@ func NewService(userRepo UserRepo) Service {
 }
 
 func (s *service) Create(user domain.User) (*domain.User, error) {
-	usr, err := s.userRepo.Create(user)
-	if err != nil {
-		return nil, err
-	}
-	if usr == nil {
-		return nil, nil
-	}
-	return usr, nil
+	return s.userRepo.Create(user)
 }
 
-func (s *service) Get(email string, password string) (*domain.User, error) {
-	usr, err := s.userRepo.Get(email, password)
-	if err != nil {
-		return nil, err
-	}
-	if usr == nil {
-		return nil, nil
-	}
-	return usr, nil
+func (s *service) Get(email, password string) (*domain.User, error) {
+	return s.userRepo.Get(email, password)
 }

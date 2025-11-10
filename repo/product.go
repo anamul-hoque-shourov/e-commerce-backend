@@ -39,7 +39,7 @@ func (r *productRepo) Create(product domain.Product) (*domain.Product, error) {
 		RETURNING id
 	`
 	row := r.db.QueryRow(query, product.Title, product.Description, product.Price, product.ImageUrl)
-	err := row.Scan(&product.ID)
+	err := row.Scan(&product.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (r *productRepo) Get(productId int) (*domain.Product, error) {
 	return &product, nil
 }
 
-func (r *productRepo) List(page int, limit int) ([]*domain.Product, error) {
+func (r *productRepo) List(page, limit int) ([]*domain.Product, error) {
 	offset := ((page - 1) * limit)
 	query := `
 		SELECT 
@@ -104,7 +104,7 @@ func (r *productRepo) Update(product domain.Product) (*domain.Product, error) {
 		RETURNING id, title, description, price, image_url
 	`
 	var updatedProduct domain.Product
-	err := r.db.Get(&updatedProduct, query, product.Title, product.Description, product.Price, product.ImageUrl, product.ID)
+	err := r.db.Get(&updatedProduct, query, product.Title, product.Description, product.Price, product.ImageUrl, product.Id)
 	if err != nil {
 		return nil, err
 	}

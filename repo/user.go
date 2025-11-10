@@ -52,12 +52,12 @@ func (r *userRepo) Create(user domain.User) (*domain.User, error) {
 		rows.Scan(&id)
 	}
 
-	user.ID = id
+	user.Id = id
 
 	return &user, nil
 }
 
-func (r *userRepo) Get(email string, password string) (*domain.User, error) {
+func (r *userRepo) Get(email, password string) (*domain.User, error) {
 	var user domain.User
 	query := `
 		SELECT 
