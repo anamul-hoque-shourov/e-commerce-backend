@@ -22,7 +22,7 @@ func NewUserRepo(db *sqlx.DB) UserRepo {
 	}
 }
 
-func (r *userRepo) Create(user domain.User) (*domain.User, error) {
+func (repo *userRepo) Create(user domain.User) (*domain.User, error) {
 	query := `
 		INSERT INTO users (
 			first_name, 
@@ -42,7 +42,7 @@ func (r *userRepo) Create(user domain.User) (*domain.User, error) {
 	`
 
 	var id int
-	rows, err := r.db.NamedQuery(query, user)
+	rows, err := repo.db.NamedQuery(query, user)
 
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (r *userRepo) Create(user domain.User) (*domain.User, error) {
 	return &user, nil
 }
 
-func (r *userRepo) Get(email, password string) (*domain.User, error) {
+func (repo *userRepo) Get(email, password string) (*domain.User, error) {
 	var user domain.User
 	query := `
 		SELECT 
@@ -71,7 +71,7 @@ func (r *userRepo) Get(email, password string) (*domain.User, error) {
 		WHERE email = $1 AND password = $2
 		LIMIT 1
 	`
-	err := r.db.Get(&user, query, email, password)
+	err := repo.db.Get(&user, query, email, password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

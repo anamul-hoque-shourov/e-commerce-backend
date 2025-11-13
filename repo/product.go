@@ -23,7 +23,7 @@ func NewProductRepo(db *sqlx.DB) ProductRepo {
 	}
 }
 
-func (r *productRepo) Create(product domain.Product) (*domain.Product, error) {
+func (repo *productRepo) Create(product domain.Product) (*domain.Product, error) {
 	query := `
 		INSERT INTO products (
 			title,
@@ -38,7 +38,7 @@ func (r *productRepo) Create(product domain.Product) (*domain.Product, error) {
 		)
 		RETURNING id
 	`
-	row := r.db.QueryRow(query, product.Title, product.Description, product.Price, product.ImageUrl)
+	row := repo.db.QueryRow(query, product.Title, product.Description, product.Price, product.ImageUrl)
 	err := row.Scan(&product.Id)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (r *productRepo) Create(product domain.Product) (*domain.Product, error) {
 	return &product, nil
 }
 
-func (r *productRepo) Get(productId int) (*domain.Product, error) {
+func (repo *productRepo) Get(productId int) (*domain.Product, error) {
 	query := `
 		SELECT 
 			id,
@@ -59,7 +59,7 @@ func (r *productRepo) Get(productId int) (*domain.Product, error) {
 		WHERE id = $1
 	`
 	var product domain.Product
-	err := r.db.Get(&product, query, productId)
+	err := repo.db.Get(&product, query, productId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -69,7 +69,7 @@ func (r *productRepo) Get(productId int) (*domain.Product, error) {
 	return &product, nil
 }
 
-func (r *productRepo) List(page, limit int) ([]*domain.Product, error) {
+func (repo *productRepo) List(page, limit int) ([]*domain.Product, error) {
 	offset := ((page - 1) * limit)
 	query := `
 		SELECT 
@@ -84,7 +84,7 @@ func (r *productRepo) List(page, limit int) ([]*domain.Product, error) {
 		OFFSET $2
 	`
 	var products []*domain.Product
-	err := r.db.Select(&products, query, limit, offset)
+	err := repo.db.Select(&products, query, limit, offset)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -92,7 +92,7 @@ func (r *productRepo) List(page, limit int) ([]*domain.Product, error) {
 	return products, nil
 }
 
-func (r *productRepo) Update(product domain.Product) (*domain.Product, error) {
+func (repo *productRepo) Update(product domain.Product) (*domain.Product, error) {
 	query := `
 		UPDATE products
 		SET
@@ -104,19 +104,19 @@ func (r *productRepo) Update(product domain.Product) (*domain.Product, error) {
 		RETURNING id, title, description, price, image_url
 	`
 	var updatedProduct domain.Product
-	err := r.db.Get(&updatedProduct, query, product.Title, product.Description, product.Price, product.ImageUrl, product.Id)
+	err := repo.db.Get(&updatedProduct, query, product.Title, product.Description, product.Price, product.ImageUrl, product.Id)
 	if err != nil {
 		return nil, err
 	}
 	return &updatedProduct, nil
 }
 
-func (r *productRepo) Delete(productId int) error {
+func (repo *productRepo) Delete(productId int) error {
 	query := `
 		DELETE FROM products
 		WHERE id = $1
 	`
-	result, err := r.db.Exec(query, productId)
+	result, err := repo.db.Exec(query, productId)
 	if err != nil {
 		return err
 	}

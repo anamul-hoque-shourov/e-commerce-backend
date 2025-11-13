@@ -5,15 +5,15 @@ import (
 	"net/http"
 )
 
-func (h *Handler) RegisterRoutes(mux *http.ServeMux, manager *middlewares.Manager) {
+func (handler *UserHandler) RegisterRoutes(mux *http.ServeMux, manager *middlewares.MiddlewareManager) {
 	mux.Handle("POST /users",
-		manager.With(
-			http.HandlerFunc(h.CreateUser),
+		manager.CustomManager(
+			http.HandlerFunc(handler.CreateUser),
 		),
 	)
 	mux.Handle("POST /users/login",
-		manager.With(
-			http.HandlerFunc(h.Login),
+		manager.CustomManager(
+			http.HandlerFunc(handler.Login),
 		),
 	)
 }

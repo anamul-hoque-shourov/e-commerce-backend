@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func (h *Handler) DeleteProduct(res http.ResponseWriter, req *http.Request) {
+func (handler *ProductHandler) DeleteProduct(res http.ResponseWriter, req *http.Request) {
 	productId := req.PathValue("id")
 
 	id, err := strconv.Atoi(productId)
@@ -17,7 +17,7 @@ func (h *Handler) DeleteProduct(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = h.service.Delete(id)
+	err = handler.productService.Delete(id)
 	if err != nil {
 		http.Error(res, "Error deleting product", http.StatusInternalServerError)
 		return

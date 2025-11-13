@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func (h *Handler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
+func (handler *ProductHandler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
 	productId := req.PathValue("id")
 
 	id, err := strconv.Atoi(productId)
@@ -28,7 +28,7 @@ func (h *Handler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	product.Id = id
-	_, err = h.service.Update(product)
+	_, err = handler.productService.Update(product)
 	if err != nil {
 		http.Error(res, "Error updating product", http.StatusInternalServerError)
 		return

@@ -2,32 +2,32 @@ package product
 
 import "ecommerce/domain"
 
-type service struct {
+type productService struct {
 	productRepo ProductRepo
 }
 
-func NewService(productRepo ProductRepo) Service {
-	return &service{
+func NewProductService(productRepo ProductRepo) ProductService {
+	return &productService{
 		productRepo: productRepo,
 	}
 }
 
-func (s *service) List(page, limit int) ([]*domain.Product, error) {
-	return s.productRepo.List(page, limit)
+func (service *productService) List(page, limit int) ([]*domain.Product, error) {
+	return service.productRepo.List(page, limit)
 }
 
-func (s *service) Get(productId int) (*domain.Product, error) {
-	return s.productRepo.Get(productId)
+func (service *productService) Get(productId int) (*domain.Product, error) {
+	return service.productRepo.Get(productId)
 }
 
-func (s *service) Create(product domain.Product) (*domain.Product, error) {
-	return s.productRepo.Create(product)
+func (service *productService) Create(product domain.Product) (*domain.Product, error) {
+	return service.productRepo.Create(product)
 }
 
-func (s *service) Update(product domain.Product) (*domain.Product, error) {
-	return s.productRepo.Update(product)
+func (service *productService) Update(product domain.Product) (*domain.Product, error) {
+	return service.productRepo.Update(product)
 }
 
-func (s *service) Delete(productId int) error {
-	return s.productRepo.Delete(productId)
+func (service *productService) Delete(productId int) error {
+	return service.productRepo.Delete(productId)
 }

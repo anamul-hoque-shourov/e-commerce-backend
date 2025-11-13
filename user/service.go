@@ -2,20 +2,20 @@ package user
 
 import "ecommerce/domain"
 
-type service struct {
+type userService struct {
 	userRepo UserRepo
 }
 
-func NewService(userRepo UserRepo) Service {
-	return &service{
+func NewUserService(userRepo UserRepo) UserService {
+	return &userService{
 		userRepo: userRepo,
 	}
 }
 
-func (s *service) Create(user domain.User) (*domain.User, error) {
-	return s.userRepo.Create(user)
+func (service *userService) Create(user domain.User) (*domain.User, error) {
+	return service.userRepo.Create(user)
 }
 
-func (s *service) Get(email, password string) (*domain.User, error) {
-	return s.userRepo.Get(email, password)
+func (service *userService) Get(email, password string) (*domain.User, error) {
+	return service.userRepo.Get(email, password)
 }

@@ -5,8 +5,8 @@ import (
 	"ecommerce/rest/handlers/user"
 )
 
-type Service interface {
-	user.Service
+type UserService interface {
+	user.UserService
 }
 
 type UserRepo interface {

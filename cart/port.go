@@ -5,8 +5,8 @@ import (
 	"ecommerce/rest/handlers/cart"
 )
 
-type Service interface {
-	cart.Service
+type CartService interface {
+	cart.CartService
 }
 
 type CartRepo interface {

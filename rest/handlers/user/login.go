@@ -12,7 +12,7 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func (h *Handler) Login(res http.ResponseWriter, req *http.Request) {
+func (handler *UserHandler) Login(res http.ResponseWriter, req *http.Request) {
 	var loginReq LoginRequest
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&loginReq)
@@ -22,7 +22,7 @@ func (h *Handler) Login(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, err := h.service.Get(loginReq.Email, loginReq.Password)
+	user, err := handler.userService.Get(loginReq.Email, loginReq.Password)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(res, "Could not login", http.StatusInternalServerError)
@@ -33,7 +33,7 @@ func (h *Handler) Login(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	accessToken, err := utils.CreateJwt(h.config.JwtSecret, utils.Payload{
+	accessToken, err := utils.CreateJwt(handler.config.JwtSecret, utils.Payload{
 		Id:          user.Id,
 		FistName:    user.FirstName,
 		LastName:    user.LastName,

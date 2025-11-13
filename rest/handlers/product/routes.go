@@ -5,33 +5,33 @@ import (
 	"net/http"
 )
 
-func (h *Handler) RegisterRoutes(mux *http.ServeMux, manager *middlewares.Manager) {
+func (handler *ProductHandler) RegisterRoutes(mux *http.ServeMux, manager *middlewares.MiddlewareManager) {
 	mux.Handle("GET /products",
-		manager.With(
-			http.HandlerFunc(h.GetProducts),
+		manager.CustomManager(
+			http.HandlerFunc(handler.GetProducts),
 		),
 	)
 	mux.Handle("POST /products",
-		manager.With(
-			http.HandlerFunc(h.CreateProduct),
-			h.middlewares.AuthenticateJWT,
+		manager.CustomManager(
+			http.HandlerFunc(handler.CreateProduct),
+			handler.middlewares.AuthenticateJWT,
 		),
 	)
 	mux.Handle("GET /products/{id}",
-		manager.With(
-			http.HandlerFunc(h.GetProduct),
+		manager.CustomManager(
+			http.HandlerFunc(handler.GetProduct),
 		),
 	)
 	mux.Handle("PUT /products/{id}",
-		manager.With(
-			http.HandlerFunc(h.UpdateProduct),
-			h.middlewares.AuthenticateJWT,
+		manager.CustomManager(
+			http.HandlerFunc(handler.UpdateProduct),
+			handler.middlewares.AuthenticateJWT,
 		),
 	)
 	mux.Handle("DELETE /products/{id}",
-		manager.With(
-			http.HandlerFunc(h.DeleteProduct),
-			h.middlewares.AuthenticateJWT,
+		manager.CustomManager(
+			http.HandlerFunc(handler.DeleteProduct),
+			handler.middlewares.AuthenticateJWT,
 		),
 	)
 }

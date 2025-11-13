@@ -5,10 +5,10 @@ import (
 	"net/http"
 )
 
-func (h *Handler) RegisterRoutes(mux *http.ServeMux, manager *middlewares.Manager) {
+func (handler *CartHandler) RegisterRoutes(mux *http.ServeMux, manager *middlewares.MiddlewareManager) {
 	mux.Handle("POST /cart",
-		manager.With(
-			http.HandlerFunc(h.AddToCart),
+		manager.CustomManager(
+			http.HandlerFunc(handler.AddToCart),
 		),
 	)
 }

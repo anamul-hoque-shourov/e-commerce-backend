@@ -14,16 +14,16 @@ import (
 
 type Server struct {
 	config         *config.Config
-	userHandler    *user.Handler
-	productHandler *product.Handler
-	cartHandler    *cart.Handler
+	userHandler    *user.UserHandler
+	productHandler *product.ProductHandler
+	cartHandler    *cart.CartHandler
 }
 
 func NewServer(
 	config *config.Config,
-	userHandler *user.Handler,
-	productHandler *product.Handler,
-	cartHandler *cart.Handler,
+	userHandler *user.UserHandler,
+	productHandler *product.ProductHandler,
+	cartHandler *cart.CartHandler,
 ) *Server {
 	return &Server{
 		config:         config,
@@ -34,19 +34,19 @@ func NewServer(
 }
 
 func (server *Server) Start() {
-	manager := middlewares.NewManager()
-	manager.Use(
+	middlewareManager := middlewares.NewMiddlewareManager()
+	middlewareManager.GlobalManager(
 		middlewares.Preflight,
 		middlewares.Cors,
 		middlewares.Logger,
 	)
 
 	mux := http.NewServeMux()
-	wrappedMux := manager.WrapMux(mux)
+	wrappedMux := middlewareManager.WrapMux(mux)
 
-	server.userHandler.RegisterRoutes(mux, manager)
-	server.productHandler.RegisterRoutes(mux, manager)
-	server.cartHandler.RegisterRoutes(mux, manager)
+	server.userHandler.RegisterRoutes(mux, middlewareManager)
+	server.productHandler.RegisterRoutes(mux, middlewareManager)
+	server.cartHandler.RegisterRoutes(mux, middlewareManager)
 
 	fmt.Println("Starting", server.config.ServiceName, "version", server.config.Version, "on port", server.config.Port)
 

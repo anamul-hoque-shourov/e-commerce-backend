@@ -16,7 +16,7 @@ type RequestCreateUser struct {
 	IsShopOwner bool   `json:"isShopOwner"`
 }
 
-func (h *Handler) CreateUser(res http.ResponseWriter, req *http.Request) {
+func (handler *UserHandler) CreateUser(res http.ResponseWriter, req *http.Request) {
 	var requestedUser RequestCreateUser
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&requestedUser)
@@ -27,7 +27,7 @@ func (h *Handler) CreateUser(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	newUser, err := h.service.Create(domain.User{
+	newUser, err := handler.userService.Create(domain.User{
 		FirstName:   requestedUser.FirstName,
 		LastName:    requestedUser.LastName,
 		Email:       requestedUser.Email,

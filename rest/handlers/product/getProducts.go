@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (h *Handler) GetProducts(res http.ResponseWriter, req *http.Request) {
+func (handler *ProductHandler) GetProducts(res http.ResponseWriter, req *http.Request) {
 
 	pageQuery := req.URL.Query().Get("page")
 	limitQuery := req.URL.Query().Get("limit")
@@ -22,7 +22,7 @@ func (h *Handler) GetProducts(res http.ResponseWriter, req *http.Request) {
 		limit = 10
 	}
 
-	products, err := h.service.List(page, limit)
+	products, err := handler.productService.List(page, limit)
 	if err != nil {
 		http.Error(res, "Error fetching products", http.StatusInternalServerError)
 		return

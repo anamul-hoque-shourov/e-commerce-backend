@@ -4,14 +4,14 @@ import (
 	"ecommerce/config"
 )
 
-type Handler struct {
+type UserHandler struct {
 	config  *config.Config
-	service Service
+	userService UserService
 }
 
-func NewHandler(config *config.Config, service Service) *Handler {
-	return &Handler{
+func NewUserHandler(config *config.Config, userService UserService) *UserHandler {
+	return &UserHandler{
 		config:  config,
-		service: service,
+		userService: userService,
 	}
 }

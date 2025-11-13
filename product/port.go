@@ -5,8 +5,8 @@ import (
 	"ecommerce/rest/handlers/product"
 )
 
-type Service interface {
-	product.Service
+type ProductService interface {
+	product.ProductService
 }
 
 type ProductRepo interface {

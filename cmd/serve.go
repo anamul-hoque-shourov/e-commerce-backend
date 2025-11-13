@@ -18,13 +18,13 @@ import (
 
 func Serve() {
 	config := config.GetConfig()
-	dbConnection, err := db.NewConnection(config)
+	dbConnection, err := db.NewDbConnection(config)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	err = db.MigrateDB(dbConnection, "./migrations")
+	err = db.MigrateDb(dbConnection, "./migrations")
 	if err != nil {
 		fmt.Println("Could not run migrations:", err)
 		os.Exit(1)
@@ -36,13 +36,13 @@ func Serve() {
 	productRepo := repo.NewProductRepo(dbConnection)
 	cartRepo := repo.NewCartRepo(dbConnection)
 
-	userService := userDomain.NewService(userRepo)
-	productService := productDomain.NewService(productRepo)
-	cartService := cartDomain.NewService(cartRepo)
+	userService := userDomain.NewUserService(userRepo)
+	productService := productDomain.NewProductService(productRepo)
+	cartService := cartDomain.NewCartService(cartRepo)
 
-	userHandler := userHandler.NewHandler(config, userService)
-	productHandler := productHandler.NewHandler(middlewares, productService)
-	cartHandler := cartHandler.NewHandler(middlewares, cartService)
+	userHandler := userHandler.NewUserHandler(config, userService)
+	productHandler := productHandler.NewProductHandler(middlewares, productService)
+	cartHandler := cartHandler.NewCartHandler(middlewares, cartService)
 
 	server := rest.NewServer(
 		config,

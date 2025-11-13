@@ -10,7 +10,7 @@ import (
 
 var configurations *Config
 
-type DBConfig struct {
+type DbConfig struct {
 	Host     string
 	Port     int
 	User     string
@@ -24,7 +24,7 @@ type Config struct {
 	ServiceName string
 	Port        int
 	JwtSecret   string
-	DBConfig    DBConfig
+	DbConfig    DbConfig
 }
 
 func loadConfig() {
@@ -106,7 +106,7 @@ func loadConfig() {
 		os.Exit(1)
 	}
 
-	dbConfig := DBConfig{
+	dbConfig := &DbConfig{
 		Host:     dbHost,
 		Port:     dbPortInt,
 		User:     dbUser,
@@ -120,7 +120,7 @@ func loadConfig() {
 		ServiceName: serviceName,
 		Port:        port,
 		JwtSecret:   jwtSecret,
-		DBConfig:    dbConfig,
+		DbConfig:    *dbConfig,
 	}
 }
 

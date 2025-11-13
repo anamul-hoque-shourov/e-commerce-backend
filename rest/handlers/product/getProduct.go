@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func (h *Handler) GetProduct(res http.ResponseWriter, req *http.Request) {
+func (handler *ProductHandler) GetProduct(res http.ResponseWriter, req *http.Request) {
 	productId := req.PathValue("id")
 
 	id, err := strconv.Atoi(productId)
@@ -17,7 +17,7 @@ func (h *Handler) GetProduct(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	product, err := h.service.Get(id)
+	product, err := handler.productService.Get(id)
 	if err != nil {
 		http.Error(res, "Error fetching product", http.StatusInternalServerError)
 		return

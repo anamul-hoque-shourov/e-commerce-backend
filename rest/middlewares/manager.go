@@ -6,32 +6,28 @@ import (
 
 type Middleware func(http.Handler) http.Handler
 
-type Manager struct {
+type MiddlewareManager struct {
 	globalMiddlewares []Middleware
 }
 
-func NewManager() *Manager {
-	return &Manager{
-		globalMiddlewares: make([]Middleware, 0),
-	}
+func NewMiddlewareManager() *MiddlewareManager {
+	return &MiddlewareManager{}
 }
 
-func (manager *Manager) Use(middlewares ...Middleware) {
+func (manager *MiddlewareManager) GlobalManager(middlewares ...Middleware) {
 	manager.globalMiddlewares = append(manager.globalMiddlewares, middlewares...)
 }
 
-func (manager *Manager) With(handler http.Handler, middlewares ...Middleware) http.Handler {
-	next := handler
+func (manager *MiddlewareManager) CustomManager(handler http.Handler, middlewares ...Middleware) http.Handler {
 	for _, middleware := range middlewares {
-		next = middleware(next)
+		handler = middleware(handler)
 	}
-	return next
+	return handler
 }
 
-func (manager *Manager) WrapMux(mux http.Handler) http.Handler {
-	next := mux
+func (manager *MiddlewareManager) WrapMux(mux http.Handler) http.Handler {
 	for _, middleware := range manager.globalMiddlewares {
-		next = middleware(next)
+		mux = middleware(mux)
 	}
-	return next
+	return mux
 }

@@ -4,17 +4,17 @@ import (
 	"ecommerce/rest/middlewares"
 )
 
-type Handler struct {
-	middlewares *middlewares.Middlewares
-	service     Service
+type ProductHandler struct {
+	middlewares    *middlewares.Middlewares
+	productService ProductService
 }
 
-func NewHandler(
+func NewProductHandler(
 	middlewares *middlewares.Middlewares,
-	service Service,
-) *Handler {
-	return &Handler{
-		middlewares: middlewares,
-		service:     service,
+	productService ProductService,
+) *ProductHandler {
+	return &ProductHandler{
+		middlewares:    middlewares,
+		productService: productService,
 	}
 }

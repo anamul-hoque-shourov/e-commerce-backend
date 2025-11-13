@@ -8,7 +8,7 @@ import (
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-func MigrateDB(db *sqlx.DB, dir string) error {
+func MigrateDb(db *sqlx.DB, dir string) error {
 	migration := &migrate.FileMigrationSource{
 		Dir: dir,
 	}
