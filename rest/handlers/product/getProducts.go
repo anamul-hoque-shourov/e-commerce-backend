@@ -7,12 +7,16 @@ import (
 	"strconv"
 )
 
+type PaginatedData struct {
+	Data       []*domain.Product `json:"data"`
+	Pagination *Pagination       `json:"pagination"`
+}
+
 type Pagination struct {
-	Data        []*domain.Product `json:"data"`
-	CurrentPage int               `json:"currentPage"`
-	Limit       int               `json:"limit"`
-	TotalItems  int               `json:"totalItems"`
-	TotalPages  int               `json:"totalPages"`
+	CurrentPage int `json:"currentPage"`
+	Limit       int `json:"limit"`
+	TotalItems  int `json:"totalItems"`
+	TotalPages  int `json:"totalPages"`
 }
 
 func (handler *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
@@ -43,13 +47,20 @@ func (handler *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	paginatedProducts := &Pagination{
-		Data:        products,
-		Limit:       limit,
-		CurrentPage: page,
-		TotalItems:  count,
-		TotalPages:  count / limit,
+	totalPages := (count + limit - 1) / limit
+	if totalPages == 0 {
+		totalPages = 1
 	}
 
-	utils.SendData(w, paginatedProducts, http.StatusOK)
+	paginatedData := &PaginatedData{
+		Data: products,
+		Pagination: &Pagination{
+			Limit:       limit,
+			CurrentPage: page,
+			TotalItems:  count,
+			TotalPages:  totalPages,
+		},
+	}
+
+	utils.SendData(w, paginatedData, http.StatusOK)
 }
