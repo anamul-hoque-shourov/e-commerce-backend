@@ -5,12 +5,12 @@ import (
 	"net/http"
 )
 
-func SendData(res http.ResponseWriter, data any, statusCode int) {
-	res.WriteHeader(statusCode)
-	json.NewEncoder(res).Encode(data)
+func SendData(w http.ResponseWriter, data any, statusCode int) {
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(data)
 }
 
-func SendError(res http.ResponseWriter, msg string, statusCode int) {
-	res.WriteHeader(statusCode)
-	json.NewEncoder(res).Encode(msg)
+func SendError(w http.ResponseWriter, msg string, statusCode int) {
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(msg)
 }

@@ -8,23 +8,23 @@ import (
 	"strings"
 )
 
-func (m *Middlewares) AuthenticateJWT(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		header := req.Header.Get("Authorization")
+func (middlewares *Middlewares) Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		header := r.Header.Get("Authorization")
 		if header == "" {
-			http.Error(res, "No Authorization header provided", http.StatusUnauthorized)
+			http.Error(w, "No Authorization header provided", http.StatusUnauthorized)
 			return
 		}
 		headerArray := strings.Split(header, " ")
 		if len(headerArray) != 2 {
-			http.Error(res, "Invalid Authorization header format", http.StatusUnauthorized)
+			http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
 			return
 		}
 
 		accessToken := headerArray[1]
 		tokenParts := strings.Split(accessToken, ".")
 		if len(tokenParts) != 3 {
-			http.Error(res, "Invalid token format", http.StatusUnauthorized)
+			http.Error(w, "Invalid token format", http.StatusUnauthorized)
 			return
 		}
 
@@ -34,7 +34,7 @@ func (m *Middlewares) AuthenticateJWT(next http.Handler) http.Handler {
 
 		message := jwtHeader + "." + jwtPayload
 
-		byteArraySecret := []byte(m.config.JwtSecret)
+		byteArraySecret := []byte(middlewares.config.JwtSecret)
 		byteArrayMessage := []byte(message)
 
 		h := hmac.New(sha256.New, byteArraySecret)
@@ -44,9 +44,9 @@ func (m *Middlewares) AuthenticateJWT(next http.Handler) http.Handler {
 		ExpectedSignature := utils.Base64UrlEncode(hash)
 
 		if jwtSignature != ExpectedSignature {
-			http.Error(res, "Invalid token signature. Tui hacker", http.StatusUnauthorized)
+			http.Error(w, "Invalid token signature. Tui hacker", http.StatusUnauthorized)
 			return
 		}
-		next.ServeHTTP(res, req)
+		next.ServeHTTP(w, r)
 	})
 }

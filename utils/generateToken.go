@@ -20,7 +20,7 @@ type Payload struct {
 	IsShopOwner bool   `json:"isShopOwner"`
 }
 
-func CreateJwt(secret string, payload Payload) (string, error) {
+func GenerateToken(secret string, payload Payload) (string, error) {
 	header := Header{
 		Alg: "HS256",
 		Typ: "JWT",

@@ -11,7 +11,9 @@ type MiddlewareManager struct {
 }
 
 func NewMiddlewareManager() *MiddlewareManager {
-	return &MiddlewareManager{}
+	return &MiddlewareManager{
+		globalMiddlewares: make([]Middleware, 0),
+	}
 }
 
 func (manager *MiddlewareManager) GlobalManager(middlewares ...Middleware) {

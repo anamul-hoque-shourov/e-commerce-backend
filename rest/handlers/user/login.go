@@ -12,28 +12,28 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func (handler *UserHandler) Login(res http.ResponseWriter, req *http.Request) {
+func (handler *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq LoginRequest
-	decoder := json.NewDecoder(req.Body)
+	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&loginReq)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Invalid request", http.StatusBadRequest)
+		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
 	user, err := handler.userService.Get(loginReq.Email, loginReq.Password)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Could not login", http.StatusInternalServerError)
+		http.Error(w, "Could not login", http.StatusInternalServerError)
 		return
 	}
 	if user == nil {
-		utils.SendError(res, "Invalid email or password", http.StatusUnauthorized)
+		utils.SendError(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
-	accessToken, err := utils.CreateJwt(handler.config.JwtSecret, utils.Payload{
+	accessToken, err := utils.GenerateToken(handler.config.JwtSecret, utils.Payload{
 		Id:          user.Id,
 		FistName:    user.FirstName,
 		LastName:    user.LastName,
@@ -42,9 +42,9 @@ func (handler *UserHandler) Login(res http.ResponseWriter, req *http.Request) {
 	})
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Could not create JWT", http.StatusInternalServerError)
+		http.Error(w, "Could not create JWT", http.StatusInternalServerError)
 		return
 	}
 
-	utils.SendData(res, accessToken, http.StatusOK)
+	utils.SendData(w, accessToken, http.StatusOK)
 }

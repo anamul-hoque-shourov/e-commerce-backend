@@ -16,13 +16,13 @@ type RequestCreateProduct struct {
 	ImageUrl    string  `json:"imageUrl"`
 }
 
-func (handler *ProductHandler) CreateProduct(res http.ResponseWriter, req *http.Request) {
+func (handler *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var requestedProduct RequestCreateProduct
-	decoder := json.NewDecoder(req.Body)
+	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&requestedProduct)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Please provide valid json", http.StatusBadRequest)
+		http.Error(w, "Please provide valid json", http.StatusBadRequest)
 		return
 	}
 	createdProduct, err := handler.productService.Create(domain.Product{
@@ -32,9 +32,9 @@ func (handler *ProductHandler) CreateProduct(res http.ResponseWriter, req *http.
 		ImageUrl:    requestedProduct.ImageUrl,
 	})
 	if err != nil {
-		http.Error(res, "Error creating product", http.StatusInternalServerError)
+		http.Error(w, "Error creating product", http.StatusInternalServerError)
 		return
 	}
 
-	utils.SendData(res, createdProduct, http.StatusCreated)
+	utils.SendData(w, createdProduct, http.StatusCreated)
 }

@@ -3,11 +3,11 @@ package middlewares
 import "net/http"
 
 func Preflight(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.Method == http.MethodOptions {
-			res.WriteHeader(http.StatusOK)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
 			return
 		}
-		next.ServeHTTP(res, req)
+		next.ServeHTTP(w, r)
 	})
 }

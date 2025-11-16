@@ -92,6 +92,20 @@ func (repo *productRepo) List(page, limit int) ([]*domain.Product, error) {
 	return products, nil
 }
 
+func (repo *productRepo) Count() (int, error) {
+	query := `
+		SELECT
+			COUNT(*)
+		FROM products
+	`
+	var productsCount int
+	err := repo.db.Get(&productsCount, query)
+	if err != nil {
+		return 0, err
+	}
+	return productsCount, nil
+}
+
 func (repo *productRepo) Update(product domain.Product) (*domain.Product, error) {
 	query := `
 		UPDATE products

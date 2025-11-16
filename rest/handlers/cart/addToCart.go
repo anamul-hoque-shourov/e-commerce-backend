@@ -13,20 +13,20 @@ type UserRequest struct {
 	Quantity  int `json:"quantity"`
 }
 
-func (handler *CartHandler) AddToCart(res http.ResponseWriter, req *http.Request) {
+func (handler *CartHandler) AddToCart(w http.ResponseWriter, r *http.Request) {
 	var userRequest UserRequest
-	decoder := json.NewDecoder(req.Body)
+	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&userRequest)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Please provide valid json", http.StatusBadRequest)
+		http.Error(w, "Please provide valid json", http.StatusBadRequest)
 		return
 	}
 	err = handler.cartService.AddItem(userRequest.UserId, userRequest.ProductId, userRequest.Quantity)
 	if err != nil {
-		http.Error(res, "Error creating product", http.StatusInternalServerError)
+		http.Error(w, "Error creating product", http.StatusInternalServerError)
 		return
 	}
 
-	utils.SendData(res, "Product added to cart", http.StatusCreated)
+	utils.SendData(w, "Product added to cart", http.StatusCreated)
 }

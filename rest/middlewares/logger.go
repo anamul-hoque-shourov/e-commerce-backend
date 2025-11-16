@@ -7,9 +7,9 @@ import (
 )
 
 func Logger(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		next.ServeHTTP(res, req)
-		log.Println(req.Method, req.URL.Path, time.Since(start))
+		next.ServeHTTP(w, r)
+		log.Println(r.Method, r.URL.Path, time.Since(start))
 	})
 }

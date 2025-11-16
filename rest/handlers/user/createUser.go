@@ -16,14 +16,14 @@ type RequestCreateUser struct {
 	IsShopOwner bool   `json:"isShopOwner"`
 }
 
-func (handler *UserHandler) CreateUser(res http.ResponseWriter, req *http.Request) {
+func (handler *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var requestedUser RequestCreateUser
-	decoder := json.NewDecoder(req.Body)
+	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&requestedUser)
 
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Invalid request", http.StatusBadRequest)
+		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
@@ -37,9 +37,9 @@ func (handler *UserHandler) CreateUser(res http.ResponseWriter, req *http.Reques
 
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Could not create user", http.StatusInternalServerError)
+		http.Error(w, "Could not create user", http.StatusInternalServerError)
 		return
 	}
 
-	utils.SendData(res, newUser, http.StatusCreated)
+	utils.SendData(w, newUser, http.StatusCreated)
 }

@@ -9,30 +9,30 @@ import (
 	"strconv"
 )
 
-func (handler *ProductHandler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
-	productId := req.PathValue("id")
+func (handler *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
+	productId := r.PathValue("id")
 
 	id, err := strconv.Atoi(productId)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Please provide valid product id", http.StatusBadRequest)
+		http.Error(w, "Please provide valid product id", http.StatusBadRequest)
 		return
 	}
 
 	var product domain.Product
-	decoder := json.NewDecoder(req.Body)
+	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&product)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Please provide valid json", http.StatusBadRequest)
+		http.Error(w, "Please provide valid json", http.StatusBadRequest)
 		return
 	}
 	product.Id = id
 	_, err = handler.productService.Update(product)
 	if err != nil {
-		http.Error(res, "Error updating product", http.StatusInternalServerError)
+		http.Error(w, "Error updating product", http.StatusInternalServerError)
 		return
 	}
 
-	utils.SendData(res, "Product updated successfully", http.StatusCreated)
+	utils.SendData(w, "Product updated successfully", http.StatusCreated)
 }

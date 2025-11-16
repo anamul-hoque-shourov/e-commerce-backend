@@ -2,6 +2,6 @@ package cart
 
 import "net/http"
 
-func (handler *CartHandler) RemoveFromCart(res http.ResponseWriter, req *http.Request) {
+func (handler *CartHandler) RemoveFromCart(w http.ResponseWriter, r *http.Request) {
 
 }

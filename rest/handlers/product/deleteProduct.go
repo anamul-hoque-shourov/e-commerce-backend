@@ -7,21 +7,21 @@ import (
 	"strconv"
 )
 
-func (handler *ProductHandler) DeleteProduct(res http.ResponseWriter, req *http.Request) {
-	productId := req.PathValue("id")
+func (handler *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
+	productId := r.PathValue("id")
 
 	id, err := strconv.Atoi(productId)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(res, "Please provide valid product id", http.StatusBadRequest)
+		http.Error(w, "Please provide valid product id", http.StatusBadRequest)
 		return
 	}
 
 	err = handler.productService.Delete(id)
 	if err != nil {
-		http.Error(res, "Error deleting product", http.StatusInternalServerError)
+		http.Error(w, "Error deleting product", http.StatusInternalServerError)
 		return
 	}
 
-	utils.SendData(res, "Product deleted successfully", http.StatusOK)
+	utils.SendData(w, "Product deleted successfully", http.StatusOK)
 }
