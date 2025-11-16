@@ -10,7 +10,7 @@ func SendData(w http.ResponseWriter, data any, statusCode int) {
 	json.NewEncoder(w).Encode(data)
 }
 
-func SendError(w http.ResponseWriter, msg string, statusCode int) {
+func SendError(w http.ResponseWriter, message string, statusCode int) {
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(msg)
+	json.NewEncoder(w).Encode(message)
 }
