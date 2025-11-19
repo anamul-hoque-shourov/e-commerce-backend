@@ -8,17 +8,18 @@ import (
 )
 
 func (handler *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
-	productId := r.PathValue("id")
+	id := r.PathValue("id")
 
-	id, err := strconv.Atoi(productId)
+	productId, err := strconv.Atoi(id)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Please provide valid product id", http.StatusBadRequest)
 		return
 	}
 
-	err = handler.productService.Delete(id)
+	err = handler.productService.Delete(productId)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "Error deleting product", http.StatusInternalServerError)
 		return
 	}

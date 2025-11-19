@@ -1,10 +1,15 @@
 package product
 
 import (
+	"ecommerce/domain"
 	"ecommerce/utils"
 	"net/http"
 	"strconv"
+	"sync"
 )
+
+var products []*domain.Product
+var count int
 
 func (handler *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	pageQuery := r.URL.Query().Get("page")
@@ -21,17 +26,31 @@ func (handler *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Reques
 		limit = 10
 	}
 
-	products, err := handler.productService.List(page, limit)
-	if err != nil {
-		http.Error(w, "Error fetching products", http.StatusInternalServerError)
-		return
-	}
+	var wg sync.WaitGroup
 
-	count, err := handler.productService.Count()
-	if err != nil {
-		http.Error(w, "Error fetching count", http.StatusInternalServerError)
-		return
-	}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		prdcts, err := handler.productService.List(page, limit)
+		if err != nil {
+			http.Error(w, "Error fetching products", http.StatusInternalServerError)
+			return
+		}
+		products = prdcts
+	}()
 
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		cnt, err := handler.productService.Count()
+		if err != nil {
+			http.Error(w, "Error fetching count", http.StatusInternalServerError)
+			return
+		}
+		count = cnt
+	}()
+
+	wg.Wait()
+	
 	utils.SendPage(w, products, page, limit, count)
 }
