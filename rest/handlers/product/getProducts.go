@@ -27,10 +27,13 @@ func (handler *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Reques
 	}
 
 	var wg sync.WaitGroup
+	var mu sync.Mutex
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
+		mu.Lock()
+		defer mu.Unlock()
 		prdcts, err := handler.productService.List(page, limit)
 		if err != nil {
 			http.Error(w, "Error fetching products", http.StatusInternalServerError)
@@ -42,6 +45,8 @@ func (handler *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Reques
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
+		mu.Lock()
+		defer mu.Unlock()
 		cnt, err := handler.productService.Count()
 		if err != nil {
 			http.Error(w, "Error fetching count", http.StatusInternalServerError)
@@ -51,6 +56,6 @@ func (handler *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Reques
 	}()
 
 	wg.Wait()
-	
+
 	utils.SendPage(w, products, page, limit, count)
 }
